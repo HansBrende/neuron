@@ -1,4 +1,4 @@
-package proj;
+package neuron;
 
 
 public abstract class NeuronConfiguration {

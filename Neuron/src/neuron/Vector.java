@@ -1,4 +1,4 @@
-package proj;
+package neuron;
 
 import java.util.Arrays;
 import java.util.function.DoubleBinaryOperator;

@@ -1,4 +1,4 @@
-package proj;
+package neuron;
 
 import java.util.AbstractList;
 import java.util.ArrayList;

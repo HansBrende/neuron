@@ -1,4 +1,4 @@
-package proj;
+package neuron;
 
 public interface Util {
 	
