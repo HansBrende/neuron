@@ -35,7 +35,7 @@ public class PlotFrame extends Application {
 	}
 
 	public void buildTPlot() {
-		plot = new Plotter(0, neuron.config.length, -100E-3, 100E-3, 600, 400, "x (m)", "V (V)");
+		plot = new Plotter(0, neuron.config.length, -100E-3, 100E-3, 600, 400, "x (mm)", "V (mV)", 1000, 1000);
 
 		tplot = new TemporalPlot(plot, t -> {
 			BiVector b = neuron.XV();

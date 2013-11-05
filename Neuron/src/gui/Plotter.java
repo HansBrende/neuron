@@ -17,9 +17,10 @@ public class Plotter {
 	public final double xmin, xmax, ymin, ymax;
 	public final int length, height;
 
-	public final int top = 30, left = 50, bottom = 50, right = 30;
+	public final int top = 50, left = 50, bottom = 50, right = 50;
 	private double lastx, lasty;
 	private boolean lines = true, points = true;
+	public final double xscale, yscale;
 	
 	private String xlabel, ylabel;
 	
@@ -36,7 +37,9 @@ public class Plotter {
 	}
 
 	public Plotter(double xmin, double xmax, double ymin, double ymax,
-			int length, int height, String xlabel, String ylabel) {
+			int length, int height, String xlabel, String ylabel, double xscale, double yscale) {
+		this.xscale = xscale;
+		this.yscale = yscale;
 		this.xmin = xmin;
 		this.ymin = ymin;
 		this.xmax = xmax;
@@ -63,10 +66,11 @@ public class Plotter {
 			double value = xmin + x * dx;
 			double xdx = x(value);
 			gc.strokeLine(xdx, y0 + 3, xdx, y0 - 3);
-			double vabs = Math.abs(value);
+			double val = value * xscale;
+			double vabs = Math.abs(val);
 			if (vabs > 1E-16) {
 				String format = vabs > 1000000 || vabs < .1 ? "%.1e" : "%.1f";
-				gc.strokeText(String.format(format, value), xdx, y0 + 12);
+				gc.strokeText(String.format(format, val), xdx, y0 + 12);
 			}
 		}
 		gc.setTextAlign(TextAlignment.RIGHT);
@@ -74,10 +78,11 @@ public class Plotter {
 			double value = ymin + y * dy;
 			double ydy = y(value);
 			gc.strokeLine(x0 + 3, ydy, x0 - 3, ydy);
-			double vabs = Math.abs(value);
+			double val = value * yscale;
+			double vabs = Math.abs(val);
 			if (vabs > 1E-16) {
 				String format = vabs > 1000000 || vabs < .1 ? "%.1e" : "%.1f";
-				gc.strokeText(String.format(format, value), x0 - 8, ydy);
+				gc.strokeText(String.format(format, val), x0 - 8, ydy);
 			}
 		}
 		gc.setTextAlign(TextAlignment.LEFT);
@@ -85,7 +90,7 @@ public class Plotter {
 			gc.strokeText(xlabel, left + length + 5, y(0));
 		gc.setTextAlign(TextAlignment.CENTER);
 		if (ylabel != null)
-			gc.strokeText(ylabel, x(0), top - 5);
+			gc.strokeText(ylabel, x(0), top - 10);
 		lastx = Double.NaN;
 		lasty = Double.NaN;
 	}

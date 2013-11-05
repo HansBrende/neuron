@@ -62,7 +62,7 @@ public class TemporalPlot extends AnimationTimer {
 			double vabs = Math.abs(time);
 			String format = vabs > 1000000 || vabs < .001 ? "t=%.1e s" : "t=%.3f s";
 			plot.gc.strokeText(String.format(format, time),
-					plot.left, plot.top + plot.height);
+					10, plot.top + plot.height + plot.bottom - 10);
 			plot.gc.setTextAlign(ta);
 			time += dt;
 		}
