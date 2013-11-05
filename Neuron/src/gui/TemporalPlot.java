@@ -12,7 +12,6 @@ public class TemporalPlot extends AnimationTimer {
 
 	private final Plotter plot;
 	private final double dt;
-	private volatile double scale = 1;
 
 	private final DoubleFunction<BiVector> it;
 	private double time = 0;
@@ -30,42 +29,31 @@ public class TemporalPlot extends AnimationTimer {
 	public TemporalPlot(Plotter plot, DoubleBinaryOperator op, double dx, double dt) {
 		this(plot, t->new BiVector(x->op.applyAsDouble(x, t), plot.xmin, plot.xmax, dx), dt);
 	}
-
-	public void setScale(double scale) {
-		this.scale = scale;
-	}
 	
-	public double getScale() {
-		return scale;
-	}
-	
-	private long stepscaled() {
-		return (long) (dt * 1_000_000_000L / scale);
-	}
-	
-	public void start() {
-		nextnanos = System.nanoTime();
+	public void start() {		
 		super.start();
 	}
-	
-	private long nextnanos;
+		
+	private static final long framePeriod = 33_333_333;
 
 	@Override
 	public void handle(long nanos) {
-		while (nanos - nextnanos >= 0) {
-			nextnanos += stepscaled();
-			BiVector pair = it.apply(time);
-			plot.reset();
-			plot.plot(pair);
-			TextAlignment ta = plot.gc.getTextAlign();
-			plot.gc.setTextAlign(TextAlignment.LEFT);
-			double vabs = Math.abs(time);
-			String format = vabs > 1000000 || vabs < .001 ? "t=%.1e s" : "t=%.3f s";
-			plot.gc.strokeText(String.format(format, time),
-					10, plot.top + plot.height + plot.bottom - 10);
-			plot.gc.setTextAlign(ta);
+		long next = nanos + framePeriod;
+		plot.reset();
+		plot.plot(it.apply(dt));
+		TextAlignment ta = plot.gc.getTextAlign();
+		plot.gc.setTextAlign(TextAlignment.LEFT);
+		double vabs = Math.abs(time);
+		String format = vabs >= 1000000 || vabs < .001 ? "t=%.1e s" : "t=%.3f s";
+		plot.gc.strokeText(String.format(format, time), 10, plot.top + plot.height + plot.bottom - 10);
+		plot.gc.setTextAlign(ta);
+		time += dt;
+		while (next > System.nanoTime()) {
+			it.apply(dt);
 			time += dt;
 		}
+		
 	}
-
 }
+
+

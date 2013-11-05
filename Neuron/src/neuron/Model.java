@@ -61,16 +61,24 @@ public abstract class Model {
 			return elapsedSeconds;
 		}
 		
-		public void incrementTime(double seconds, int numSteps) {
-			double dt = seconds / numSteps;
-			for (int x = 0; x < numSteps; x++) {
-				elapsedSeconds += dt;
-				for (Sliver sliver : slivers)
-						sliver.calculateStep(dt);
-				for (Sliver sliver : slivers)
-					sliver.propagateStep();
-			}
+		public void step(double dt) {
+			for (Sliver sliver : slivers)
+				sliver.calculateStep(dt);
+			for (Sliver sliver : slivers)
+				sliver.propagateStep();
+			elapsedSeconds += dt;
 		}
+		
+//		public void incrementTime(double seconds, int numSteps) {
+//			double dt = seconds / numSteps;
+//			for (int x = 0; x < numSteps; x++) {
+//				elapsedSeconds += dt;
+//				for (Sliver sliver : slivers)
+//						sliver.calculateStep(dt);
+//				for (Sliver sliver : slivers)
+//					sliver.propagateStep();
+//			}
+//		}
 		
 		public double I_ion(State state) {
 			return E.negate().plus(state.V).dot(g.apply(state));

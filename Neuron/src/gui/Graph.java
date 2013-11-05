@@ -16,7 +16,7 @@ public class Graph extends Application {
 	@Override
 	public void start(Stage s) throws Exception {
 		StandardConfiguration config = new StandardConfiguration();
-		Plotter p = new Plotter(0, config.length, -.00002, .00002, 1200, 400, "x", "y", 1000000, 1000000);
+		Plotter p = new Plotter(0, config.length, -.00002, .00002, 1200, 400, "x (mm)", "y (mm)", 1000, 1000);
 		System.out.println(Util.SHEATH_GAP);
 		
 		double dx = Util.SHEATH_GAP / 3;

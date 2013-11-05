@@ -7,10 +7,6 @@ import neuron.StandardConfiguration;
 import javafx.application.Application;
 import javafx.scene.Group;
 import javafx.scene.Scene;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 public class PlotFrame extends Application {
@@ -24,7 +20,7 @@ public class PlotFrame extends Application {
 	}
 
 	private Neuron neuron;
-	private double dt = .0000001;
+	private double dt = .0000000001;
 
 	public void buildNeuron() {
 		ModelHH model = new ModelHH();
@@ -37,9 +33,9 @@ public class PlotFrame extends Application {
 	public void buildTPlot() {
 		plot = new Plotter(0, neuron.config.length, -100E-3, 100E-3, 600, 400, "x (mm)", "V (mV)", 1000, 1000);
 
-		tplot = new TemporalPlot(plot, t -> {
+		tplot = new TemporalPlot(plot, step -> {
 			BiVector b = neuron.XV();
-			neuron.incrementTime(dt, 1);
+			neuron.step(step);
 			return b;
 		}, dt);
 	}
@@ -72,7 +68,6 @@ public class PlotFrame extends Application {
 
 		primaryStage.setScene(new Scene(g));
 		primaryStage.show();
-		tplot.setScale(.0000001);
 		tplot.start();
 	}
 

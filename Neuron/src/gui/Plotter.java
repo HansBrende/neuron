@@ -68,8 +68,8 @@ public class Plotter {
 			gc.strokeLine(xdx, y0 + 3, xdx, y0 - 3);
 			double val = value * xscale;
 			double vabs = Math.abs(val);
-			if (vabs > 1E-16) {
-				String format = vabs > 1000000 || vabs < .1 ? "%.1e" : "%.1f";
+			if (value > 1E-16 || value < -1E-16) {
+				String format = vabs >= 1000 || vabs < .001 ? "%.1e" : (vabs > 9 ? "%.1f" : "%.3f");
 				gc.strokeText(String.format(format, val), xdx, y0 + 12);
 			}
 		}
@@ -80,8 +80,8 @@ public class Plotter {
 			gc.strokeLine(x0 + 3, ydy, x0 - 3, ydy);
 			double val = value * yscale;
 			double vabs = Math.abs(val);
-			if (vabs > 1E-16) {
-				String format = vabs > 1000000 || vabs < .1 ? "%.1e" : "%.1f";
+			if (value > 1E-16 || value < -1E-16) {
+				String format = vabs >= 1000 || vabs < .001 ? "%.1e" : (vabs > 9 ? "%.1f" : "%.3f");
 				gc.strokeText(String.format(format, val), x0 - 8, ydy);
 			}
 		}
@@ -90,7 +90,7 @@ public class Plotter {
 			gc.strokeText(xlabel, left + length + 5, y(0));
 		gc.setTextAlign(TextAlignment.CENTER);
 		if (ylabel != null)
-			gc.strokeText(ylabel, x(0), top - 10);
+			gc.strokeText(ylabel, x(0), top - 15);
 		lastx = Double.NaN;
 		lasty = Double.NaN;
 	}
