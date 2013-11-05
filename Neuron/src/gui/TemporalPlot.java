@@ -4,6 +4,7 @@ import java.util.function.DoubleBinaryOperator;
 import java.util.function.DoubleFunction;
 
 import javafx.animation.AnimationTimer;
+import javafx.scene.canvas.Canvas;
 import javafx.scene.text.TextAlignment;
 import neuron.BiVector;
 
@@ -15,7 +16,10 @@ public class TemporalPlot extends AnimationTimer {
 
 	private final DoubleFunction<BiVector> it;
 	private double time = 0;
-
+	
+	public Canvas getCanvas() {
+		return plot.getCanvas();
+	}
 
 	public TemporalPlot(Plotter plot, DoubleFunction<BiVector> it, double dt) {
 		this.plot = plot;
@@ -55,7 +59,9 @@ public class TemporalPlot extends AnimationTimer {
 			plot.plot(pair);
 			TextAlignment ta = plot.gc.getTextAlign();
 			plot.gc.setTextAlign(TextAlignment.LEFT);
-			plot.gc.strokeText(String.format("t=%.3f s", time),
+			double vabs = Math.abs(time);
+			String format = vabs > 1000000 || vabs < .001 ? "t=%.1e s" : "t=%.3f s";
+			plot.gc.strokeText(String.format(format, time),
 					plot.left, plot.top + plot.height);
 			plot.gc.setTextAlign(ta);
 			time += dt;

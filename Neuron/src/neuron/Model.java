@@ -27,6 +27,8 @@ public abstract class Model {
 		this.E = E;
 	}
 	
+	protected abstract double restingPotential();
+	
 	protected abstract Function<State, Vector> g();
 	
 	public Neuron build(NeuronConfiguration nc) {
@@ -112,7 +114,7 @@ public abstract class Model {
 			time = n::elapsedSeconds;
 			I_ion = n::I_ion;
 			I_inj = t -> n.config.I_inj(x, t);
-			V = -65E-3;
+			V = restingPotential();
 			previous = index == 0 ? this : n.get(index - 1);
 
 		}

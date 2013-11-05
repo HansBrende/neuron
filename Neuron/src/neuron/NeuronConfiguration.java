@@ -4,7 +4,7 @@ package neuron;
 public abstract class NeuronConfiguration {
 	
 	public static enum Region {
-		DENDRITE, SOMA, INITIAL_SEGMENT, MYELINATED_AXON, AXON_NODE
+		DENDRITE, SOMA, HILLOCK, INITIAL_SEGMENT, MYELINATED_AXON, AXON_NODE
 	}
 	
 	public final double length;
