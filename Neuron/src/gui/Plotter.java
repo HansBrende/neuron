@@ -10,13 +10,14 @@ import javafx.scene.text.TextAlignment;
 
 public class Plotter {
 	
+	
 	public final Canvas canvas;
 	public final GraphicsContext gc;
 
 	public final double xmin, xmax, ymin, ymax;
 	public final int length, height;
 
-	public final int top = 30, left = 30, bottom = 30, right = 30;
+	public final int top = 30, left = 50, bottom = 50, right = 30;
 	private double lastx, lasty;
 	private boolean lines = true, points = true;
 	
@@ -50,35 +51,34 @@ public class Plotter {
 		reset();
 	}
 	
-	private double xmid() {
-		return left + length / 2;
-	}
-	
-	private double ymid() {
-		return top + height / 2;
-	}
-	
 	public void reset() {
 		gc.setFill(Color.WHITE);
 		gc.fillRect(0, 0, length + left + right, height + top + bottom);
 		gc.setFill(Color.BLACK);
-		gc.strokeLine(x(xmin), y(0), x(xmax), y(0));
-		gc.strokeLine(x(0), y(ymin), x(0), y(ymax));
-		double dx = (xmax - xmin) / 10, dy = (ymax - ymin) / 10, xmid = xmid(), ymid = ymid();
+		double y0 = y(0), x0 = x(0);
+		gc.strokeLine(x(xmin), y0, x(xmax), y0);
+		gc.strokeLine(x0, y(ymin), x0, y(ymax));
+		double dx = (xmax - xmin) / 10, dy = (ymax - ymin) / 10;
 		for (int x = 0; x <= 10; x++) {
 			double value = xmin + x * dx;
 			double xdx = x(value);
-			gc.strokeLine(xdx, ymid + 3, xdx, ymid - 3);
-			if (value >= .1 || value <= -.1)
-				gc.strokeText(String.format("%.1f", value), xdx, ymid + 12);
+			gc.strokeLine(xdx, y0 + 3, xdx, y0 - 3);
+			double vabs = Math.abs(value);
+			if (vabs > 1E-16) {
+				String format = vabs > 1000000 || vabs < .1 ? "%.1e" : "%.1f";
+				gc.strokeText(String.format(format, value), xdx, y0 + 12);
+			}
 		}
 		gc.setTextAlign(TextAlignment.RIGHT);
 		for (int y = 0; y <= 10; y++) {
 			double value = ymin + y * dy;
 			double ydy = y(value);
-			gc.strokeLine(xmid + 3, ydy, xmid - 3, ydy);
-			if (value >= .1 || value <= -.1)
-				gc.strokeText(String.format("%.1f", value), xmid - 8, ydy);
+			gc.strokeLine(x0 + 3, ydy, x0 - 3, ydy);
+			double vabs = Math.abs(value);
+			if (vabs > 1E-16) {
+				String format = vabs > 1000000 || vabs < .1 ? "%.1e" : "%.1f";
+				gc.strokeText(String.format(format, value), x0 - 8, ydy);
+			}
 		}
 		gc.setTextAlign(TextAlignment.LEFT);
 		if (xlabel != null)

@@ -29,8 +29,8 @@ public abstract class Model {
 	
 	protected abstract Function<State, Vector> g();
 	
-	public Neuron build(NeuronConfiguration nc, int numSteps) {
-		return new Neuron(nc, numSteps);
+	public Neuron build(NeuronConfiguration nc) {
+		return new Neuron(nc);
 	}
 	
 	public class Neuron extends AbstractList<Sliver> {
@@ -45,12 +45,13 @@ public abstract class Model {
 		public final int stepCount;
 		public final double dx;
 		
-		private Neuron(NeuronConfiguration nc, int numSteps) {
+		private Neuron(NeuronConfiguration nc) {
+			
 			config = nc;
-			stepCount = numSteps;
-			dx = config.length / numSteps;
+			stepCount = (int)(nc.length / nc.dx());
+			dx = config.length / stepCount;
 			g = g();
-			for (int x = 0; x < numSteps; x++)
+			for (int x = 0; x < stepCount; x++)
 				slivers.add(new Sliver(this, x));
 		}
 		
@@ -83,6 +84,12 @@ public abstract class Model {
 			return stepCount;
 		}
 		
+		public BiVector XV() {
+			double[] x = slivers.stream().mapToDouble(sliver -> sliver.x).toArray();
+			double[] v = slivers.stream().mapToDouble(sliver -> sliver.V()).toArray();
+			return new BiVector(x, v);
+		}
+		
 	}
 	
 	public class Sliver {
@@ -91,7 +98,7 @@ public abstract class Model {
 		public final int index;
 		public final double dx, x, c_m, r_a;
 		public final DoubleSupplier time;
-		public final Sliver previous, next;
+		public final Sliver previous;
 		public final ToDoubleFunction<State> I_ion;
 		public final DoubleUnaryOperator I_inj;
 
@@ -105,14 +112,19 @@ public abstract class Model {
 			time = n::elapsedSeconds;
 			I_ion = n::I_ion;
 			I_inj = t -> n.config.I_inj(x, t);
+			V = -65E-3;
 			previous = index == 0 ? this : n.get(index - 1);
-			next = index == n.stepCount - 1 ? this : n.get(index + 1);
+
 		}
 		
 		public void calculateStep(double dt) {
 			State state = new State(x, time.getAsDouble(), dt, V, neuron.config);
 			double i = I_ion.applyAsDouble(state) + I_inj.applyAsDouble(state.t);
-			temporaryV = ((previous.V + next.V - 2*V)/(r_a*dx*dx) - i) * dt/c_m + V;
+			temporaryV = ((previous.V + next().V - 2*V)/(r_a*dx*dx) - i) * dt/c_m + V;
+		}
+		
+		private Sliver next() {
+			return index == neuron.stepCount - 1 ? this : neuron.get(index + 1);
 		}
 		
 		public void propagateStep() {

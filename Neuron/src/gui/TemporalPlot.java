@@ -31,6 +31,10 @@ public class TemporalPlot extends AnimationTimer {
 		this.scale = scale;
 	}
 	
+	public double getScale() {
+		return scale;
+	}
+	
 	private long stepscaled() {
 		return (long) (dt * 1_000_000_000L / scale);
 	}

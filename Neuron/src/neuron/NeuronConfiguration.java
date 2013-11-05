@@ -4,7 +4,7 @@ package neuron;
 public abstract class NeuronConfiguration {
 	
 	public static enum Region {
-		DENDRITE, SOMA, MYELINATED_AXON, UNMYELINATED_AXON
+		DENDRITE, SOMA, INITIAL_SEGMENT, MYELINATED_AXON, AXON_NODE
 	}
 	
 	public final double length;
@@ -27,15 +27,14 @@ public abstract class NeuronConfiguration {
 		return Util.r_a(cytoResistivity(x), cytoRadius(x));
 	}
 	
-	public abstract Region regionAt(double x);
-	
-	public abstract int myelinSheathCount();
-	
 	public abstract double somaStart();
 	
-	public abstract double unmyelinatedStart(int unmyelinatedAxonSegmentNumber);
+	public abstract double axonStart();
 	
-	public abstract double myelinatedStart(int myelinatedAxonSegmentNumber);
+	public abstract double sheathGap();
+	public abstract double dx();
+	
+	public abstract Region regionFor(double x);
 	
 	public abstract double I_inj(double x, double t);
 
