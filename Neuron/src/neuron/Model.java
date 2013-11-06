@@ -40,9 +40,7 @@ public abstract class Model {
 		private double elapsedSeconds;
 
 		private final ArrayList<Sliver> slivers = new ArrayList<>();
-		
-		private final Function<State, Vector> g;
-		
+				
 		public final NeuronConfiguration config;
 		public final int stepCount;
 		public final double dx;
@@ -52,7 +50,6 @@ public abstract class Model {
 			config = nc;
 			stepCount = (int)(nc.length / nc.dx());
 			dx = config.length / stepCount;
-			g = g();
 			for (int x = 0; x < stepCount; x++)
 				slivers.add(new Sliver(this, x));
 		}
@@ -80,23 +77,6 @@ public abstract class Model {
 //			}
 //		}
 		
-		public double I_ion(State state) {
-			
-			Vector v = g.apply(state);
-			double d = E.negate().plus(state.V).dot(v);
-//			if (!Double.isFinite(d)) {
-//				System.out.println("E_Na: " + E.get(0));
-//				System.out.println("E_K: " + E.get(1));
-//				System.out.println("E_L: " + E.get(2));
-//				System.out.println("V: " + state.V);
-//				System.out.println("g_Na: " + v.get(0));
-//				System.out.println("g_K: " + v.get(1));
-//				System.out.println("g_L: " + v.get(2));
-//				System.exit(0);
-//			}
-			return d;
-		}
-		
 		@Override
 		public Sliver get(int index) {
 			return slivers.get(index);
@@ -122,8 +102,9 @@ public abstract class Model {
 		public final double dx, x, c_m, r_a;
 		public final DoubleSupplier time;
 		public final Sliver previous;
-		public final ToDoubleFunction<State> I_ion;
 		public final DoubleUnaryOperator I_inj;
+		
+		public final Function<State, Vector> g;
 
 		private double V, temporaryV;
 		
@@ -133,16 +114,33 @@ public abstract class Model {
 			c_m = n.config.c_m(x);
 			r_a = n.config.r_a(x);
 			time = n::elapsedSeconds;
-			I_ion = n::I_ion;
+			g = g();
 			I_inj = t -> n.config.I_inj(x, t);
 			V = restingPotential();
 			previous = index == 0 ? this : n.get(index - 1);
 
 		}
 		
+		public double I_ion(State state) {
+			
+			Vector v = g.apply(state);
+			double d = E.negate().plus(state.V).dot(v);
+//			if (!Double.isFinite(d)) {
+//				System.out.println("E_Na: " + E.get(0));
+//				System.out.println("E_K: " + E.get(1));
+//				System.out.println("E_L: " + E.get(2));
+//				System.out.println("V: " + state.V);
+//				System.out.println("g_Na: " + v.get(0));
+//				System.out.println("g_K: " + v.get(1));
+//				System.out.println("g_L: " + v.get(2));
+//				System.exit(0);
+//			}
+			return d;
+		}
+		
 		public void calculateStep(double dt) {
 			State state = new State(x, time.getAsDouble(), dt, V, neuron.config);
-			double i = I_ion.applyAsDouble(state) + I_inj.applyAsDouble(state.t);
+			double i = I_ion(state) + I_inj.applyAsDouble(state.t);
 			temporaryV = ((previous.V + next().V - 2*V)/(r_a*dx*dx) - i) * dt/c_m + V;
 //			if (!Double.isFinite(temporaryV)) {
 //				System.out.println("x: " + x);

@@ -104,6 +104,11 @@ public class StandardConfiguration extends NeuronConfiguration {
 
 	@Override
 	public double I_inj(double x, double t) {
+//		double length = Util.DENDRITE_LENGTH / 30;
+//		double start = Util.DENDRITE_LENGTH / 2;
+//		
+//		if (x >= start && x < start + length && t < .1E-6)
+//			return .02;
 		return 0;
 	}
 

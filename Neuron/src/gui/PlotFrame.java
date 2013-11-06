@@ -20,7 +20,7 @@ public class PlotFrame extends Application {
 	}
 
 	private Neuron neuron;
-	private double dt = .000000001;
+	private double dt = .00001;
 
 	public void buildNeuron() {
 		ModelHH model = new ModelHH();

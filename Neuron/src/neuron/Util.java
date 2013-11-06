@@ -27,6 +27,10 @@ public interface Util {
 		return specificMembraneResistance / (2 * Math.PI * avgRadius);
 	}
 	
+	public static double g_m(double specificMembraneConductance, double avgRadius) {
+		return specificMembraneConductance * 2 * Math.PI * avgRadius;
+	}
+	
 	public static double membraneResistance(double r_m, double length) {
 		return r_m / length;
 	}

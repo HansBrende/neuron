@@ -35,7 +35,7 @@ public class Page39 extends Application {
 
 		for (double t = -30; t <= 50; t += dt) {
 			if (abs(t - 10) < dt)
-				I_ext = 24;
+				I_ext = 0;
 			if (abs(t - 40) < dt)
 				I_ext = 0;
 			double alpha0 = (10 - V) / (100 * (exp((10 - V) / 10) - 1));

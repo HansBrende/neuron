@@ -18,6 +18,10 @@ public abstract class NeuronConfiguration {
 	public abstract double membranePermittivity(double x);
 	public abstract double membraneWidth(double x);
 	
+	public double avgRadius(double x) {
+		return cytoRadius(x) + .5 * membraneWidth(x);
+	}
+	
 	public double c_m(double x) {
 		double r = cytoRadius(x);
 		return Util.c_m(membranePermittivity(x), r, r + membraneWidth(x));
