@@ -1,33 +1,41 @@
 package gui;
 
 import java.util.function.DoubleBinaryOperator;
-import java.util.function.DoubleFunction;
 
 import javafx.animation.AnimationTimer;
+import javafx.scene.Group;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.text.TextAlignment;
 import neuron.BiVector;
 
 public class TemporalPlot extends AnimationTimer {
+	
+	public static interface DoubleBiFunction {
+		BiVector apply(double t, double dt);
+	}
 
 	private final Plotter plot;
 	private final double dt;
 
-	private final DoubleFunction<BiVector> it;
+	private final DoubleBiFunction it;
 	private double time = 0;
 	
 	public Canvas getCanvas() {
 		return plot.getCanvas();
 	}
+	
+	public Group getNode() {
+		return plot.getNode();
+	}
 
-	public TemporalPlot(Plotter plot, DoubleFunction<BiVector> it, double dt) {
+	public TemporalPlot(Plotter plot, DoubleBiFunction it, double dt) {
 		this.plot = plot;
 		this.it = it;
 		this.dt = dt;
 	}
 	
 	public TemporalPlot(Plotter plot, DoubleBinaryOperator op, double dx, double dt) {
-		this(plot, t->new BiVector(x->op.applyAsDouble(x, t), plot.xmin, plot.xmax, dx), dt);
+		this(plot, (t, step)->new BiVector(x->op.applyAsDouble(x, t), plot.xmin, plot.xmax, dx), dt);
 	}
 	
 	public void start() {		
@@ -40,7 +48,7 @@ public class TemporalPlot extends AnimationTimer {
 	public void handle(long nanos) {
 		long next = nanos + framePeriod;
 		plot.reset();
-		plot.plot(it.apply(dt));
+		plot.plot(it.apply(time, dt));
 		TextAlignment ta = plot.gc.getTextAlign();
 		plot.gc.setTextAlign(TextAlignment.LEFT);
 		double vabs = Math.abs(time);
@@ -49,7 +57,7 @@ public class TemporalPlot extends AnimationTimer {
 		plot.gc.setTextAlign(ta);
 		time += dt;
 		while (next > System.nanoTime()) {
-			it.apply(dt);
+			it.apply(time, dt);
 			time += dt;
 		}
 		

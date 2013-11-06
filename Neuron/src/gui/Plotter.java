@@ -3,6 +3,7 @@ package gui;
 import java.util.function.DoubleUnaryOperator;
 
 import neuron.BiVector;
+import javafx.scene.Group;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
@@ -12,6 +13,7 @@ public class Plotter {
 	
 	
 	public final Canvas canvas;
+	public final Group group;
 	public final GraphicsContext gc;
 
 	public final double xmin, xmax, ymin, ymax;
@@ -28,6 +30,11 @@ public class Plotter {
 		lines = b;
 	}
 	
+	public void cutLine() {
+		lastx = Double.NaN;
+		lasty = Double.NaN;
+	}
+	
 	public void setDrawPoint(boolean b) {
 		points = b;
 	}
@@ -35,6 +42,11 @@ public class Plotter {
 	public Canvas getCanvas() {
 		return canvas;
 	}
+	
+	public Group getNode() {
+		return group;
+	}
+	
 
 	public Plotter(double xmin, double xmax, double ymin, double ymax,
 			int length, int height, String xlabel, String ylabel, double xscale, double yscale) {
@@ -49,6 +61,7 @@ public class Plotter {
 		this.xlabel = xlabel;
 		this.ylabel = ylabel;
 		canvas = new Canvas(length + left + right, height + top + bottom);
+		group = new Group(canvas);
 		gc = canvas.getGraphicsContext2D();
 		gc.setTextAlign(TextAlignment.CENTER);
 		reset();

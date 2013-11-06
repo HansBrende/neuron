@@ -33,7 +33,7 @@ public class PlotFrame extends Application {
 	public void buildTPlot() {
 		plot = new Plotter(0, neuron.config.length, -100E-3, 100E-3, 600, 400, "x (mm)", "V (mV)", 1000, 1000);
 
-		tplot = new TemporalPlot(plot, step -> {
+		tplot = new TemporalPlot(plot, (t, step) -> {
 			BiVector b = neuron.XV();
 			neuron.step(step);
 			return b;
