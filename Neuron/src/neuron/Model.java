@@ -81,7 +81,20 @@ public abstract class Model {
 //		}
 		
 		public double I_ion(State state) {
-			return E.negate().plus(state.V).dot(g.apply(state));
+			
+			Vector v = g.apply(state);
+			double d = E.negate().plus(state.V).dot(v);
+//			if (!Double.isFinite(d)) {
+//				System.out.println("E_Na: " + E.get(0));
+//				System.out.println("E_K: " + E.get(1));
+//				System.out.println("E_L: " + E.get(2));
+//				System.out.println("V: " + state.V);
+//				System.out.println("g_Na: " + v.get(0));
+//				System.out.println("g_K: " + v.get(1));
+//				System.out.println("g_L: " + v.get(2));
+//				System.exit(0);
+//			}
+			return d;
 		}
 		
 		@Override
@@ -131,6 +144,21 @@ public abstract class Model {
 			State state = new State(x, time.getAsDouble(), dt, V, neuron.config);
 			double i = I_ion.applyAsDouble(state) + I_inj.applyAsDouble(state.t);
 			temporaryV = ((previous.V + next().V - 2*V)/(r_a*dx*dx) - i) * dt/c_m + V;
+//			if (!Double.isFinite(temporaryV)) {
+//				System.out.println("x: " + x);
+//				System.out.println("region: " + neuron.config.regionFor(x));
+//				System.out.println("new V: " + temporaryV);
+//				System.out.println("previous.V: " + previous.V);
+//				System.out.println("next.V: " + next().V);
+//				System.out.println("old V: " + V);
+//				System.out.println("r_a: " + r_a);
+//				System.out.println("dx: " + dx);
+//				System.out.println("dx*dx*r_a: " + r_a*dx*dx);
+//				System.out.println("dt: " + dt);
+//				System.out.println("i: " + i);
+//				System.out.println("dt/c_m: " + dt/c_m);
+//				System.exit(0);
+//			}
 		}
 		
 		private Sliver next() {

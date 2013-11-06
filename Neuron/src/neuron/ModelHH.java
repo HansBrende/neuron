@@ -1,8 +1,22 @@
 package neuron;
 
+import java.util.ArrayList;
 import java.util.function.Function;
+import java.util.stream.Stream;
+import java.util.stream.IntStream;
+
+import javafx.application.Application;
+import javafx.stage.Stage;
+import javafx.scene.Scene;
+import static java.lang.Math.*;
+import gui.Plotter;
+import java.io.File;
 
 public class ModelHH extends Model {
+	
+	public static final ArrayList<Double> ts = new ArrayList<>();
+	public static final ArrayList<Double> ms = new ArrayList<>();
+	public static final ArrayList<Double> hs = new ArrayList<>();
 
 
 	// TAKEN FROM PAGE 39
@@ -36,25 +50,85 @@ public class ModelHH extends Model {
 		this(55E-3, -95E-3, -65E-3);
 	}
 
-	private double n, m, h;
+	private double n, m, h = 1;
 
 	@Override
 	protected Function<State, Vector> g() {
 		return state -> {
 			NeuronConfiguration c = state.config;
 			double mV = state.V * 1000, dt = state.dt, x = state.x;
-			double[] tau_n_0 = tau_n_0(mV), tau_m_0 = tau_m_0(mV), tau_h_0 = tau_h_0(mV);
-			double tn = dt / tau_n_0[0], tm = dt / tau_m_0[0], th = dt
-					/ tau_h_0[0];
-			n = (1 - tn) * n + tn * tau_n_0[1];
-			m = (1 - tm) * m + tm * tau_m_0[1];
-			h = (1 - th) * h + th * tau_h_0[1];
+			
+			double alpha0 = (10 - mV) / (100 * (exp((10 - mV) / 10) - 1));
+			double alpha1 = (25 - mV) / (10 * (exp((25 - mV) / 10) - 1));
+			double alpha2 = 0.07 * exp(-mV / 20);
+			
+			double beta0 = .125 * exp(-mV / 80);
+			double beta1 = 4 * exp(-mV / 18);
+			double beta2 = 1 / (exp((30 - mV) / 10) + 1);
+			
+			double tau0 = 1 / (alpha0 + beta0);
+			double tau1 = 1 / (alpha1 + beta1);
+			double tau2 = 1 / (alpha2 + beta2);
+			
+			double n_0 = alpha0 * tau0;
+			double n_1 = alpha1 * tau1;
+			double n_2 = alpha2 * tau2;
+			
+			n = (1 - dt / tau0) * n + dt / tau0 * n_0;
+			m = (1 - dt / tau1) * m + dt / tau1 * n_1;
+			h = (1 - dt / tau2) * h + dt / tau2 * n_2;
+			
+//			double[] tau_n_0 = tau_n_0(mV), tau_m_0 = tau_m_0(mV), tau_h_0 = tau_h_0(mV);
+//			double tn = dt / tau_n_0[0], tm = dt / tau_m_0[0], th = dt / tau_h_0[0];
+//			n = (1 - tn) * n + tn * tau_n_0[1];
+//			m = (1 - tm) * m + tm * tau_m_0[1];
+//			h = (1 - th) * h + th * tau_h_0[1];
 			Vector gMax = gMax(c, x);
 			double gK = gMax.get(1) * n * n * n * n;
-			double gNa = gMax.get(0) * m * m * m * h;
+			double gMax_0 = gMax.get(0);
+			double gNa = gMax_0 * m * m * m * h;
 			double gL = gMax.get(2);
+			if (!Double.isFinite(gNa)) {
+				System.out.println("previous V: " + mV);
+				System.out.println("gMax.get(0): " + gMax_0);
+				System.out.println("m: " + m);
+				System.out.println("h: " + h);
+				System.out.println("n: " + n);
+				Plotter plotter = new Plotter(0, state.t, -1000, 1000, 1000, 800, "t", "mh", 1, 1);
+				plotter.setDrawLine(false);
+				Stage stage = new Stage();
+				stage.setScene(new Scene(plotter.getNode()));
+				stage.show();
+				for (int index = 0; index < ts.size(); index++) {
+					double t = ts.get(index);
+					double m = ms.get(index);
+					double h = hs.get(index);
+					if (abs(m) < 1000 || abs(h) < 1000) {
+					plotter.plot(t, m);
+					plotter.plot(t, h);
+					} else {
+						break;
+					}
+				}
+				//plotter.export(new File("C:\\Users\\Hans\\Desktop\\MH.png"));
+				System.exit(0);
+				//m: -5.549830187507807E244 these are the problems!
+				//h: 3.1765315618821984E201
+			}
+			ts.add(state.t);
+			ms.add(m);
+			hs.add(h);
 			return new Vector(gNa, gK, gL);
 		};
+	}
+	
+	public static class App extends Application {
+
+		@Override
+		public void start(Stage stage) throws Exception {
+			
+		}
+		
 	}
 
 	public static double[] tau_n_0(double mV) {

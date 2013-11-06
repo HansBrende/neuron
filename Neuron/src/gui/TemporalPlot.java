@@ -48,12 +48,19 @@ public class TemporalPlot extends AnimationTimer {
 	public void handle(long nanos) {
 		long next = nanos + framePeriod;
 		plot.reset();
-		plot.plot(it.apply(time, dt));
+		BiVector v = it.apply(time, dt);
+		double[] stats = plot.plotGetStats(v);
 		TextAlignment ta = plot.gc.getTextAlign();
 		plot.gc.setTextAlign(TextAlignment.LEFT);
-		double vabs = Math.abs(time);
-		String format = vabs >= 1000000 || vabs < .001 ? "t=%.1e s" : "t=%.3f s";
-		plot.gc.strokeText(String.format(format, time), 10, plot.top + plot.height + plot.bottom - 10);
+		String[] formats = new String[stats.length + 1];
+		for (int x = -1; x < stats.length; x++) {
+			double value = x == -1 ? time : stats[x];
+			double vabs = Math.abs(value);
+			formats[x + 1] = vabs >= 1000000 || vabs < .001 ? "%.1e" : "%.3f";
+		}
+		String format = "t=" + formats[0] + " s     min=" + formats[1] + "; max=" + formats[2] + "; avg=" + formats[3] + "; num points=" + v.length;
+		plot.gc.strokeText(String.format(format, time, stats[0], stats[1], stats[2]), 10, plot.top + plot.height + plot.bottom - 10);
+		
 		plot.gc.setTextAlign(ta);
 		time += dt;
 		while (next > System.nanoTime()) {

@@ -1,11 +1,18 @@
 package gui;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.function.DoubleUnaryOperator;
 
+import javax.imageio.ImageIO;
+
 import neuron.BiVector;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.Group;
+import javafx.scene.SnapshotParameters;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;
 import javafx.scene.text.TextAlignment;
 
@@ -45,6 +52,15 @@ public class Plotter {
 	
 	public Group getNode() {
 		return group;
+	}
+	
+	public void export(File file) {
+		WritableImage image = group.snapshot(new SnapshotParameters(), null);
+	    try {
+	        ImageIO.write(SwingFXUtils.fromFXImage(image, null), "png", file);
+	    } catch (IOException e) {
+	    	throw new IllegalArgumentException();
+	    }
 	}
 	
 
@@ -129,6 +145,28 @@ public class Plotter {
 	public void plot(BiVector v) {
 		for (int i = 0; i < v.length; i++)
 			plot(v.x[i], v.y[i]);
+				
+	}
+	
+	public static void main(String[] args) {
+		System.out.println(Double.NEGATIVE_INFINITY < Double.POSITIVE_INFINITY);
+		System.out.println(Double.NEGATIVE_INFINITY > Double.POSITIVE_INFINITY);
+	}
+	
+	public double[] plotGetStats(BiVector v) {
+		double min = Double.POSITIVE_INFINITY, max = Double.NEGATIVE_INFINITY, sum = 0;
+		boolean foundone = false;
+		for (int i = 0; i < v.length; i++) {
+			double yval = v.y[i];
+			plot(v.x[i], yval);
+			foundone = foundone || !Double.isNaN(yval);
+			if (yval < min)
+				min = yval;
+			if (yval > max)
+				max = yval;
+			sum += yval;
+		}
+		return foundone ? new  double[] {min, max, sum / v.length} : new double[] {Double.NaN, Double.NaN, Double.NaN};
 	}
 
 	public void plot(DoubleUnaryOperator f, double dx) {

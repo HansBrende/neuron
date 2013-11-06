@@ -10,7 +10,7 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 public class PlotFrame extends Application {
-
+	
 
 	private Plotter plot;
 	private TemporalPlot tplot;
@@ -20,7 +20,7 @@ public class PlotFrame extends Application {
 	}
 
 	private Neuron neuron;
-	private double dt = .0000000001;
+	private double dt = .000000001;
 
 	public void buildNeuron() {
 		ModelHH model = new ModelHH();
