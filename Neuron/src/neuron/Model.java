@@ -1,11 +1,12 @@
 package neuron;
 
+import static java.lang.Math.abs;
+
 import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.function.DoubleSupplier;
 import java.util.function.DoubleUnaryOperator;
 import java.util.function.Function;
-import java.util.function.ToDoubleFunction;
 
 public abstract class Model {
 	
@@ -54,6 +55,8 @@ public abstract class Model {
 				slivers.add(new Sliver(this, x));
 		}
 		
+		
+		
 		public double elapsedSeconds() {
 			return elapsedSeconds;
 		}
@@ -76,6 +79,10 @@ public abstract class Model {
 //					sliver.propagateStep();
 //			}
 //		}
+		
+		public Sliver get(double x) {
+			return get((int)(x / config.dx()));
+		}
 		
 		@Override
 		public Sliver get(int index) {
@@ -124,7 +131,7 @@ public abstract class Model {
 		public double I_ion(State state) {
 			
 			Vector v = g.apply(state);
-			double d = E.negate().plus(state.V).dot(v);
+			double d = -E.negate().plus(state.V).dot(v);
 //			if (!Double.isFinite(d)) {
 //				System.out.println("E_Na: " + E.get(0));
 //				System.out.println("E_K: " + E.get(1));
@@ -141,7 +148,13 @@ public abstract class Model {
 		public void calculateStep(double dt) {
 			State state = new State(x, time.getAsDouble(), dt, V, neuron.config);
 			double i = I_ion(state) + I_inj.applyAsDouble(state.t);
-			temporaryV = ((previous.V + next().V - 2*V)/(r_a*dx*dx) - i) * dt/c_m + V;
+			double d2V = (previous.V + next().V - 2*V)/(r_a*dx*dx);
+			temporaryV = V + (d2V + i) * dt/c_m;
+			double I_c = -c_m * (temporaryV - V)/dt;
+			
+			if (abs(state.x - 0.0020580696255775685) < .00000001) {
+				System.out.println("new V: " + temporaryV + "; old V: " + V + "; previous.V: " + previous.V + "; next.V: " + next().V + "; I_lr: " + d2V + " I_ion: " + i + "; I_c: " + I_c + "; dt/c_m: " + dt/c_m);
+			}
 //			if (!Double.isFinite(temporaryV)) {
 //				System.out.println("x: " + x);
 //				System.out.println("region: " + neuron.config.regionFor(x));

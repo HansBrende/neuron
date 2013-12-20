@@ -1,6 +1,11 @@
 package neuron;
 
 public class StandardConfiguration extends NeuronConfiguration {
+	
+	public static void main(String[] args) {
+		StandardConfiguration sc = new StandardConfiguration();
+		sc.plot();
+	}
 
 	private static final double somaStart = Util.DENDRITE_LENGTH;
 	private static final double dendriteB = Util.DISTAL_DENDRITE_RADIUS;
@@ -104,11 +109,11 @@ public class StandardConfiguration extends NeuronConfiguration {
 
 	@Override
 	public double I_inj(double x, double t) {
-//		double length = Util.DENDRITE_LENGTH / 30;
-//		double start = Util.DENDRITE_LENGTH / 2;
-//		
-//		if (x >= start && x < start + length && t < .1E-6)
-//			return .02;
+		double length = Util.DENDRITE_LENGTH / 30;
+		double start = Util.DENDRITE_LENGTH / 2;
+		
+		if (x >= start && x < start + length && t < .1E-1)
+			return 2;
 		return 0;
 	}
 

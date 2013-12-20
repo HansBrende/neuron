@@ -1,5 +1,9 @@
 package neuron;
 
+import hans.matrix.Matrix;
+import hans.plot.PlotParams;
+import hans.plot.PlotUtils;
+
 
 public abstract class NeuronConfiguration {
 	
@@ -29,6 +33,17 @@ public abstract class NeuronConfiguration {
 	
 	public double r_a(double x) {
 		return Util.r_a(cytoResistivity(x), cytoRadius(x));
+	}
+	
+	public void plot() {
+		Matrix m = new Matrix(0, length, sheathGap() / 3, x->r_a(x));
+		double high = 3e12;
+		PlotUtils.plot(new PlotParams(m).yrange(-high, high).label("x (m)", "R (Ω/m)").title("Axial Resistance of Neuron").size(800, 400), m, "C:\\Users\\Hans\\Desktop\\neuronres.png");
+	}
+	
+	public static void main(String[] args) {
+		StandardConfiguration sc = new StandardConfiguration();
+		sc.plot();
 	}
 	
 	public abstract double somaStart();

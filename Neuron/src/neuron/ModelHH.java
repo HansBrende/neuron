@@ -56,7 +56,7 @@ public class ModelHH extends Model {
 			NeuronConfiguration c = state.config;
 			double mV = state.V * 1000, dt = state.dt, x = state.x;
 			
-			double prevM = m, prevH = h;
+//			double prevM = m, prevH = h;
 			
 			double alpha0 = (10 - mV) / (100 * (exp((10 - mV) / 10) - 1));
 			double alpha1 = (25 - mV) / (10 * (exp((25 - mV) / 10) - 1));
@@ -117,38 +117,38 @@ public class ModelHH extends Model {
 //				//m: -5.549830187507807E244 these are the problems!
 //				//h: 3.1765315618821984E201
 //			}
-			if (abs(state.x - 0.0020580696255775685) < .00000001) {
-				ts.add(state.t);
-				ms.add(m);
-				hs.add(h);
-				vs.add(state.V);
-				System.out.println("t: " + state.t + "; m: " + m + "; h: " + h + "; Vprev: " + state.V + "; m0: " + prevM + "; h0: " + prevH);
-				if (abs(m) > 10E80 || abs(h) > 10E80)
-					System.exit(0);
-			}
+//			if (abs(state.x - 0.0020580696255775685) < .00000001) {
+//				ts.add(state.t);
+//				ms.add(m);
+//				hs.add(h);
+//				vs.add(state.V);
+//				System.out.println("t: " + state.t + "; n: " + n + "; m: " + m + "; h: " + h + "; Vprev: " + state.V);
+//				if (abs(m) > 10E80 || abs(h) > 10E80)
+//					System.exit(0);
+//			}
 			return new Vector(gNa, gK, gL);
 			}
 		};
 	}
 	
-	public static double[] tau_n_0(double mV) {
-		double alpha_n = (10 - mV) / (100 * (Math.exp((10 - mV) / 10) - 1));
-		double tau_n = 1 / (alpha_n + 0.125 * Math.exp(-mV / 80));
-		return new double[] { tau_n, tau_n * alpha_n };
-	}
-
-	public static double[] tau_m_0(double mV) {
-		double alpha_m = (25 - mV) / (10 * (Math.exp((25 - mV) / 10) - 1));
-		double tau_m = 1 / (alpha_m + 4 * Math.exp(-mV / 18));
-		return new double[] { tau_m, tau_m * alpha_m };
-	}
-
-	public static double[] tau_h_0(double mV) {
-		double alpha_h = 0.07 * Math.exp(-mV / 20);
-		double tau_h = 1 / (alpha_h + 1 / (Math.exp((30 - mV) / 10) + 1));
-		return new double[] { tau_h, tau_h * alpha_h };
-
-	}
+//	public static double[] tau_n_0(double mV) {
+//		double alpha_n = (10 - mV) / (100 * (Math.exp((10 - mV) / 10) - 1));
+//		double tau_n = 1 / (alpha_n + 0.125 * Math.exp(-mV / 80));
+//		return new double[] { tau_n, tau_n * alpha_n };
+//	}
+//
+//	public static double[] tau_m_0(double mV) {
+//		double alpha_m = (25 - mV) / (10 * (Math.exp((25 - mV) / 10) - 1));
+//		double tau_m = 1 / (alpha_m + 4 * Math.exp(-mV / 18));
+//		return new double[] { tau_m, tau_m * alpha_m };
+//	}
+//
+//	public static double[] tau_h_0(double mV) {
+//		double alpha_h = 0.07 * Math.exp(-mV / 20);
+//		double tau_h = 1 / (alpha_h + 1 / (Math.exp((30 - mV) / 10) + 1));
+//		return new double[] { tau_h, tau_h * alpha_h };
+//
+//	}
 
 	@Override
 	protected double restingPotential() {

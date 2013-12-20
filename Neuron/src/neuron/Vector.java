@@ -88,6 +88,15 @@ public class Vector {
 		MultiOp o = x->op.applyAsDouble(x[0], x[1]);
 		return o.apply(this, t);
 	}
+	
+	public double[] toArray(double[] array) {
+		System.arraycopy(values, 0, array, 0, values.length);
+		return array;
+	}
+	
+	public double[] toArray() {
+		return toArray(new double[values.length]);
+	}
 
 	public static Vector op(MultiOp op, Vector...vs) {
 		return op.apply(vs);

@@ -1,21 +1,33 @@
 package gui;
 
+import neuron.BiVector;
+import graph.PlotParams;
+import graph.TemporalFunction;
+import graph.TemporalPlot;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 public class GraphTestMotion extends Application {
-	
+
 	public static void main(String[] args) {
 		Application.launch(args);
 	}
 
 	@Override
 	public void start(Stage stage) throws Exception {
-		Plotter plotter = new Plotter(-6, 6, -1, 1, 600, 400, "x", "y", 1, 1);
-		plotter.setDrawPoint(false);
-		TemporalPlot plot = new TemporalPlot(plotter, (x,t)->Math.sin(x + t) / x, .01, .0001);
-		stage.setScene(new Scene(plotter.getNode()));
+		PlotParams params = new PlotParams(-6, 6, -1, 1).label("x", "y").points(false).title("sin(x+t)/x");
+		TemporalFunction func = new TemporalFunction(.0001) {
+			private static final long serialVersionUID = -2112910739706568575L;
+			@Override
+			public BiVector[] apply(double value) {
+				return new BiVector[] {
+					new BiVector(x->Math.sin(x + value) / x, -6, 6, .01)	
+				};
+			}
+		};
+		TemporalPlot plot = new TemporalPlot(params, func);
+		stage.setScene(new Scene(plot.getNode()));
 		stage.show();
 		plot.start();
 	}

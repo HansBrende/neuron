@@ -1,5 +1,7 @@
 package gui;
 
+import graph.PlotParams;
+import graph.Plotter;
 import neuron.Vector;
 import javafx.application.Application;
 import javafx.scene.Scene;
@@ -15,11 +17,12 @@ public class Page39 extends Application {
 	@Override
 	public void start(Stage stage) throws Exception {
 
-		Plotter plotter = new Plotter(-30, 50, -65, 65, 400, 400, "Time",
-				"Voltage", 1, 1);
-		plotter.setDrawPoint(false);
+		PlotParams params = new PlotParams().range(-30, 50, -65, 65).label("Time", "Voltage").points(false);
 
-		stage.setScene(new Scene(plotter.getNode()));
+
+		Plotter plotter = new Plotter(params);
+		
+		stage.setScene(new Scene(plotter));
 		stage.setTitle("Page39");
 		stage.show();
 
@@ -35,7 +38,7 @@ public class Page39 extends Application {
 
 		for (double t = -30; t <= 50; t += dt) {
 			if (abs(t - 10) < dt)
-				I_ext = 0;
+				I_ext = 26;
 			if (abs(t - 40) < dt)
 				I_ext = 0;
 			double alpha0 = (10 - V) / (100 * (exp((10 - V) / 10) - 1));
