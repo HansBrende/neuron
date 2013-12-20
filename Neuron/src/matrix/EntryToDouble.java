@@ -1,4 +1,4 @@
-package hans.matrix;
+package matrix;
 
 public interface EntryToDouble {
 	

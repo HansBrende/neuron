@@ -1,9 +1,8 @@
-package hans.plot;
-
-import hans.matrix.Matrix;
+package awesome;
 
 import java.io.Serializable;
 
+import matrix.Matrix;
 import javafx.scene.Group;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;

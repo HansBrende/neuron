@@ -1,8 +1,8 @@
 package neuron;
 
-import hans.matrix.Matrix;
-import hans.plot.PlotParams;
-import hans.plot.PlotUtils;
+import matrix.Matrix;
+import awesome.PlotParams;
+import awesome.PlotUtils;
 
 
 public abstract class NeuronConfiguration {

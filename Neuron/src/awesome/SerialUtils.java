@@ -1,4 +1,4 @@
-package hans.utils;
+package awesome;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;

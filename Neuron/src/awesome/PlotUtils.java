@@ -1,7 +1,4 @@
-package hans.plot;
-
-import hans.matrix.Matrix;
-import hans.utils.SerialUtils;
+package awesome;
 
 import java.io.File;
 import java.io.IOException;
@@ -9,6 +6,7 @@ import java.util.List;
 
 import javax.imageio.ImageIO;
 
+import matrix.Matrix;
 import javafx.application.Application;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.Scene;

@@ -2,9 +2,9 @@ package graph.test;
 
 import java.util.ArrayList;
 
-import hans.plot.PlotParams;
-import hans.matrix.Matrix;
-import hans.plot.PlotUtils;
+import matrix.Matrix;
+import awesome.PlotParams;
+import awesome.PlotUtils;
 import static java.lang.Math.*;
 
 

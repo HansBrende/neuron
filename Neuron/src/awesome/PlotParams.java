@@ -1,9 +1,8 @@
-package hans.plot;
-
-import hans.matrix.Matrix;
-import hans.utils.SerialUtils;
+package awesome;
 
 import java.io.Serializable;
+
+import matrix.Matrix;
 
 public class PlotParams implements Serializable, Cloneable {
 	
