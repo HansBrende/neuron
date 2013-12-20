@@ -1,11 +1,10 @@
 package neuron;
 
-import hans.matrix.Matrix;
-import hans.plot.PlotParams;
-import hans.plot.PlotUtils;
-
 import java.util.ArrayList;
 
+import awesome.PlotParams;
+import awesome.PlotUtils;
+import matrix.Matrix;
 import neuron.Model.Neuron;
 import neuron.Model.Sliver;
 
